@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "64d629406a7c8ea6882f0bcd",
+    "name": "happy mother day",
+    "expire": "2023-03-24T22:00:00.000Z",
+    "discount": 50,
+    "createdAt": "2023-08-11T12:27:44.015Z",
+    "updatedAt": "2023-08-11T12:27:44.015Z",
+    "__v": 0
+  },
+  {
+    "_id": "64da2bdf60eb327cf125af68",
+    "name": "happy",
+    "expire": "2024-03-24T22:00:00.000Z",
+    "discount": 50,
+    "createdAt": "2023-08-14T13:27:59.073Z",
+    "updatedAt": "2023-08-14T13:27:59.073Z",
+    "__v": 0
+  }
+]
