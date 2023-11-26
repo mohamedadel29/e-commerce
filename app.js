@@ -1,4 +1,5 @@
 const express = require("express");
+//import KafkaConfig from "./util/config.js";
 const path =require("path")
 const dotenv = require("dotenv");
 const morgan = require("morgan");
@@ -7,7 +8,6 @@ const ApiErrors = require("./util/ApiErrors");
 const mountRoutes=require('./routes')
 const cors = require('cors')
 const compression = require('compression')
-
 const GlobalError = require("./middleware/errormiddleware");
 dotenv.config({ path: "config.env" });
 // db connection
@@ -33,12 +33,15 @@ if (process.env.NODE_ENV == "development") {
 //mount routes
 mountRoutes(app)
 
-
-
-
 app.all("*", (req, res, next) => {
   next(new ApiErrors(`cant find your route:${req.originalUrl}`, 400));
 });
+
+// consume from topic "test-topic"
+// const kafkaConfig = new KafkaConfig();
+// kafkaConfig.consume("my-topic", (value) => {
+//   console.log("📨 Receive message: ", value);
+// });
 
 //global handle middleware
 app.use(GlobalError);

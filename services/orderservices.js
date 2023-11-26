@@ -1,5 +1,6 @@
 const stripe=require('stripe')('sk_test_51NfWmvDLCoSByEEWTiaq9uMUUcttfnFG76MDVLkIymj6R4mjjdyyxYSDiQ15lwZl7Uj9KHF7NCRm6eL98Wnywi2Y00NAooFwmi')
 const asyncHandler = require("express-async-handler");
+const  Kafka  = require("../config/kafka");
 const ApiError = require("../util/ApiErrors");
 const ApiFeatures = require("../util/ApiFeature");
 const Order = require("../model/ordermodel");
@@ -43,6 +44,7 @@ exports.createCashOrder = asyncHandler(async (req, res, next) => {
 
 
     }
+    Kafka.sendOrderData(order)
     res.status(201).json({ status: 'success', data: order });
 
 });
@@ -175,7 +177,6 @@ exports.checkoutSession=asyncHandler(async(req,res)=>{
     client_reference_id: req.params.cartId,
     metadata: req.body.shippingAddress,
    });
- 
    // 4) send session to response
    res.status(200).json({ status: 'success', session });
 })

@@ -1,16 +1,59 @@
 const express = require("express");
-const { createproduct, getALLproduct, getproduct, updateproduct, deleteproduct,uploadProductImages,resizeProductImage } = require("../services/productservice");
-const { createProductValidator, getProductValidator, updateProductValidator, deleteProductValidator } = require("../util/validator/productValidator");
-const reviewroutes=require("./reviewrouthes")
-const authservices = require("../services/authservices");
-const router = express.Router();
-router.use("/:Id/reviews", reviewroutes);
-router.use(authservices.protect);
+const {
+  getProducts,
+  getProduct,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  uploadProductImages,
+  resizeProductImages,
+  createFilterObj,
+  setshopIdAndUserIdToBody,
+} = require("../services/productservice");
+const {
+  createProductValidator,
+  getProductValidator,
+  updateProductValidator,
+  deleteProductValidator,
+} = require("../util/validator/productValidator");
+const authService = require('../services/authservices');
+const reviewsRoute = require('./reviewrouthes');
 
-router.post("/",authservices.allowedto('admin','manager'),uploadProductImages,resizeProductImage,createProductValidator ,createproduct );
-router.get("/",getALLproduct );
-router.get("/:id",getProductValidator ,getproduct );
-router.put("/update/:id",authservices.allowedto('admin','manager'),uploadProductImages,resizeProductImage,updateProductValidator , updateproduct);
-router.delete("/delete/:id",authservices.allowedto('admin'),deleteProductValidator ,deleteproduct );
+const router = express.Router({mergeParams:true});
+
+// POST   /products/jkshjhsdjh2332n/reviews
+// GET    /products/jkshjhsdjh2332n/reviews
+// GET    /products/jkshjhsdjh2332n/reviews/87487sfww3
+router.use('/:productId/reviews', reviewsRoute);
+
+router
+  .route('/')
+  .get(createFilterObj,getProducts)
+  .post(
+    authService.protect,
+    authService.allowedto('admin', 'manager'),
+    setshopIdAndUserIdToBody,
+    uploadProductImages,
+    resizeProductImages,
+    createProductValidator,
+    createProduct
+  );
+router
+  .route('/:id')
+  .get(getProductValidator, getProduct)
+  .put(
+    authService.protect,
+    authService.allowedto('admin', 'manager'),
+    uploadProductImages,
+    resizeProductImages,
+    updateProductValidator,
+    updateProduct
+  )
+  .delete(
+    authService.protect,
+    authService.allowedto('admin'),
+    deleteProductValidator,
+    deleteProduct
+  );
 
 module.exports = router;

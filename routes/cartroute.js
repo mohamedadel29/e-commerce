@@ -3,7 +3,7 @@ const { addProductToCart, getLoggedCart, deleteSpesficItemInCart, clearcart, upd
 const authservices = require("../services/authservices");
 
 const router = express.Router();
-router.use(authservices.protect,authService.allowedto('user'));
+router.use(authservices.protect,authservices.allowedto('user'));
 
 router.post("/", addProductToCart);
 router.get("/",getLoggedCart)

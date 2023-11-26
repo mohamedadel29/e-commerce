@@ -1,15 +1,49 @@
-const express =require("express")
-const { createsubcategory, getAllsubcategory, getsubcategory, updatesubcategory, deletesubcategory,setCategoryIdToBody,createFilterObj } = require("../services/subcategoryservices")
-const {createSubCategoryValidator, getSubCategoryValidator, updateSubCategoryValidator, deleteSubCategoryValidator} = require("../util/validator/subcategoryValidator")
-const authservices = require("../services/authservices");
-//merge parems allow us to acess paremeter on ather router
+const express = require("express");
+const {
+  createSubCategory,
+  getSubCategory,
+  getSubCategories,
+  updateSubCategory,
+  deleteSubCategory,
+  setCategoryIdToBody,
+  createFilterObj,
+} = require("../services/subcategoryServices");
+const {
+  createSubCategoryValidator,
+  getSubCategoryValidator,
+  updateSubCategoryValidator,
+  deleteSubCategoryValidator,
+} = require("../util/validator/subcategoryValidator");
+const authService = require("../services/authservices");
+
+// mergeParams: Allow us to access parameters on other routers
+// ex: We need to access categoryId from category router
 const router = express.Router({ mergeParams: true });
-router.use(authservices.protect);
 
-router.post("/",authservices.allowedto('admin','manager'),setCategoryIdToBody,createSubCategoryValidator,createsubcategory)
-router.get("/",createFilterObj,getAllsubcategory)
-router.get("/:id",getSubCategoryValidator,getsubcategory)
-router.put("/update/:id",authservices.allowedto('admin','manager'),pdateSubCategoryValidator,updatesubcategory)
-router.delete("/delete/:id",authservices.allowedto('admin'),deleteSubCategoryValidator,deletesubcategory)
+router
+  .route("/")
+  .post(
+    authService.protect,
+    authService.allowedto("admin", "manager"),
+    setCategoryIdToBody,
+    createSubCategoryValidator,
+    createSubCategory
+  )
+  .get(createFilterObj, getSubCategories);
+router
+  .route("/:id")
+  .get(getSubCategoryValidator, getSubCategory)
+  .put(
+    authService.protect,
+    authService.allowedto("admin", "manager"),
+    updateSubCategoryValidator,
+    updateSubCategory
+  )
+  .delete(
+    authService.protect,
+    authService.allowedto("admin"),
+    deleteSubCategoryValidator,
+    deleteSubCategory
+  );
 
-module.exports=router
+module.exports = router;

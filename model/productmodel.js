@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Shop=require('./shopmodel')
 
 const productSchema = mongoose.Schema(
   {
@@ -59,6 +60,14 @@ const productSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    shop: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Shop",
+    },
     ratingsAverage: {
       type: Number,
       min:[1,"rating must be above or equal 1"],
@@ -70,6 +79,7 @@ const productSchema = mongoose.Schema(
     },
   },
   { timestamps: true,
+     // to enable virtual populate
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
    }
@@ -87,6 +97,7 @@ productSchema.pre(/^find/, function (next) {
   });
   next();
 });
+
 
 const setImageURL = (doc) => {
   if (doc.imagecover) {

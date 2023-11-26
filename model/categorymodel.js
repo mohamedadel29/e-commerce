@@ -22,7 +22,7 @@ const categoryschema=new mongoose.Schema({
 
 const setImageURL = (doc) => {
     if (doc.image) {
-      const imageUrl = `${process.env.PORT}/categories/${doc.image}`;
+      const imageUrl = `http://localhost:${process.env.PORT}/categories/${doc.image}`;
       doc.image = imageUrl;
     }
   };

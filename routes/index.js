@@ -10,7 +10,9 @@ const addressroute=require('./addressroutes')
 const couponroute=require('./couponroute')
 const cartroute=require('./cartroute')
 const orderroute=require('./orderroutes')
+const shoproute=require('./shoproutes')
 const exportroute=require('./exportroute')
+//const kafkaroute=require('./kafkaroute.js')
 
  
 const mountRoutes=(app)=>{
@@ -28,6 +30,9 @@ app.use("/api/v1/coupons", couponroute);
 app.use("/api/v1/cart", cartroute);
 app.use("/api/v1/orders", orderroute);
 app.use("/api/v1/exports", exportroute);
+app.use("/api/v1/shop",shoproute)
+//app.use("/api/v1/kafka",kafkaroute)
+
 
 }
 

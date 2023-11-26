@@ -1,0 +1,67 @@
+[
+  {
+    "_id": "64da2df9854d3d46bef25c12",
+    "user": "64d28665aa6dfd1e2c4ad921",
+    "cartItems": [
+      {
+        "product": "64beba5738189e96e6b9e726",
+        "quantity": 1,
+        "color": "red",
+        "price": 55.99,
+        "_id": "64da2b1e60eb327cf125af59"
+      },
+      {
+        "product": "64beba5738189e96e6b9e726",
+        "quantity": 1,
+        "color": "yellow",
+        "price": 55.99,
+        "_id": "64da2b2560eb327cf125af61"
+      }
+    ],
+    "taxPrice": 0,
+    "shippingAddress": {
+      "details": "address details",
+      "phone": "0123567996",
+      "city": "cairo",
+      "postalCode": "1452"
+    },
+    "shippingPrice": 0,
+    "totalOrderPrice": 55.99,
+    "paymentMethodType": "cash",
+    "isPaid": true,
+    "isDelivered": true,
+    "createdAt": "2023-08-14T13:36:57.082Z",
+    "updatedAt": "2023-08-15T13:02:33.312Z",
+    "__v": 0,
+    "paidAt": "2023-08-15T13:01:51.473Z",
+    "deliveredAt": "2023-08-15T13:02:33.310Z"
+  },
+  {
+    "_id": "64f47ebb07a52c3c3750d1e0",
+    "user": "64d286d9aa6dfd1e2c4ad930",
+    "cartItems": [
+      {
+        "product": "64beba5738189e96e6b9e726",
+        "quantity": 2,
+        "color": "red",
+        "price": 55.99,
+        "_id": "64f47eab07a52c3c3750d1d4"
+      }
+    ],
+    "taxPrice": 0,
+    "shippingAddress": {
+      "details": "address details",
+      "phone": "0123567996",
+      "city": "cairo",
+      "postalCode": "1452"
+    },
+    "shippingPrice": 0,
+    "totalOrderPrice": 111.98,
+    "paymentMethodType": "cash",
+    "isPaid": false,
+    "isDelivered": false,
+    "createdAt": "2023-09-03T12:40:27.156Z",
+    "updatedAt": "2023-09-03T12:40:27.156Z",
+    "__v": 0
+  }
+]

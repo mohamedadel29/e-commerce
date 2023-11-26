@@ -1,31 +1,56 @@
 const express = require("express");
-const multer  = require('multer')
 const {
-  createcategory,
-  getALLcategory,
-  getcategory,
-  updatecategory,
-  deletecategory,
-  resizeImage,
+  getCategories,
+  getCategory,
+  createCategory,
+  updateCategory,
+  deleteCategory,
   uploadCategoryImage,
-} = require("../services/categoryservices");
-const upload = multer({ dest: 'uploads/categories' })
-const subcategoryroute = require("./subcategoryroutes");
+  resizeImage,
+} = require('../services/categoryservices');
 const {
   createCategoryValidator,
   updateCategoryValidator,
   deleteCategoryValidator,
   getCategoryValidator,
 } = require("../util/validator/categoryValidator");
-const authservices=require("../services/authservices")
+
+const authService = require('../services/authservices');
+
+const subcategoriesRoute = require('./subcategoryroutes');
+
 const router = express.Router();
 
-router.use("/:Id/subcategory", subcategoryroute);
+// Nested route
+router.use('/:categoryId/subcategories', subcategoriesRoute);
 
-router.post("/",authservices.protect,authservices.allowedto('admin','manager'),uploadCategoryImage,resizeImage,createCategoryValidator, createcategory);
-router.get("/", getALLcategory);
-router.get("/:id", getCategoryValidator, getcategory);
-router.put("/update/:id", authservices.allowedto('admin','manager'),uploadCategoryImage,resizeImage,updateCategoryValidator, updatecategory);
-router.delete("/delete/:id", authservices.allowedto('admin'),deleteCategoryValidator, deletecategory);
+router
+  .route('/')
+  .get(getCategories)
+  .post(
+    authService.protect,
+    authService.allowedto('admin', 'manager'),
+    uploadCategoryImage,
+    resizeImage,
+    createCategoryValidator,
+    createCategory
+  );
+router
+  .route('/:id')
+  .get(getCategoryValidator, getCategory)
+  .put(
+    authService.protect,
+    authService.allowedto('admin', 'manager'),
+    uploadCategoryImage,
+    resizeImage,
+    updateCategoryValidator,
+    updateCategory
+  )
+  .delete(
+    authService.protect,
+    authService.allowedto('admin'),
+    deleteCategoryValidator,
+    deleteCategory
+  );
 
 module.exports = router;

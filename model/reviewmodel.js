@@ -1,7 +1,9 @@
 const mongoose =require('mongoose')
 const Product=require('./productmodel')
 const reviewSchema=new mongoose.Schema({
-    title:String,
+    title:{
+      type: String,
+    },
     rating:{
         type:Number,
         min:[1,"Min rating is 1"],

@@ -5,6 +5,8 @@ const ApiError=require("../util/ApiErrors")
 const slugfiy=require("slugify");
 const ApiFeature=require("../util/ApiFeature")
 const { uploadSingleImage } = require("../middleware/uploadImageMiddleware");
+const { v4: uuidv4 } = require("uuid");
+const sharp = require("sharp");
 
 const uploadCategoryImage = uploadSingleImage("image");
 const resizeImage = asyncHandler(async (req, res, next) => {
