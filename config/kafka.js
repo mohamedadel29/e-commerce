@@ -22,9 +22,7 @@ connectProducer();
 
 const sendOrderData = async (order) => {
     try {
-      // Log the order data before sending
-      console.log(order);
-  
+      // Log the order data before sending  
       const result = await producer.send({
         topic: "orders",
         messages: [
@@ -43,6 +41,33 @@ const sendOrderData = async (order) => {
       // await producer.disconnect();
     }
   };
+
+  const consumer = kafka.consumer({ groupId: "my-group" });
+
+const connectConsumer = async () => {
+  try {
+    await consumer.connect();
+    await consumer.subscribe({ topic: "orders", fromBeginning: true });
+    console.log("Connected to Kafka consumer");
+  } catch (error) {
+    console.error("Error connecting to Kafka consumer", error);
+  }
+};
+
+const consumeOrders = async () => {
+  await consumer.run({
+    eachMessage: async ({ topic, partition, message }) => {
+      const order = JSON.parse(message.value.toString());
+      console.log("Received order:", order);
+    },
+  });
+};
+
+// Call the connectConsumer function to establish a connection and subscribe to the "orders" topic
+connectConsumer().then(() => {
+  // Start consuming orders
+  consumeOrders();
+});
 
 module.exports = {
   sendOrderData,
