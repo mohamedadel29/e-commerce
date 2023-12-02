@@ -37,12 +37,6 @@ app.all("*", (req, res, next) => {
   next(new ApiErrors(`cant find your route:${req.originalUrl}`, 400));
 });
 
-// consume from topic "test-topic"
-// const kafkaConfig = new KafkaConfig();
-// kafkaConfig.consume("my-topic", (value) => {
-//   console.log("📨 Receive message: ", value);
-// });
-
 //global handle middleware
 app.use(GlobalError);
 
