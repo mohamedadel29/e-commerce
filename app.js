@@ -1,13 +1,13 @@
 const express = require("express");
 //import KafkaConfig from "./util/config.js";
-const path =require("path")
+const path = require("path");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const db = require("./config/database");
 const ApiErrors = require("./util/ApiErrors");
-const mountRoutes=require('./routes')
-const cors = require('cors')
-const compression = require('compression')
+const mountRoutes = require("./routes");
+const cors = require("cors");
+const compression = require("compression");
 const GlobalError = require("./middleware/errormiddleware");
 dotenv.config({ path: "config.env" });
 // db connection
@@ -16,22 +16,21 @@ db();
 const app = express();
 //enable ather domain to access your abblication
 app.use(cors());
-app.options('*', cors())
+app.options("*", cors());
 // compress all responses
 app.use(compression());
 
 //middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname,'uploads')))
+app.use(express.static(path.join(__dirname, "uploads")));
 
 if (process.env.NODE_ENV == "development") {
   app.use(morgan("dev"));
   console.log("mode:" + process.env.NODE_ENV);
 }
 
-
 //mount routes
-mountRoutes(app)
+mountRoutes(app);
 
 app.all("*", (req, res, next) => {
   next(new ApiErrors(`cant find your route:${req.originalUrl}`, 400));
