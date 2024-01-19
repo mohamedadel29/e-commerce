@@ -8,7 +8,7 @@ const ApiErrors = require("./util/ApiErrors");
 const mountRoutes = require("./routes");
 const cors = require("cors");
 const compression = require("compression");
-const GlobalError = require("./middleware/errormiddleware");
+const GlobalError = require("./middleware/errorMiddleware");
 dotenv.config({ path: "config.env" });
 // db connection
 db();
