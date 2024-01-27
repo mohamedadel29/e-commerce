@@ -9,6 +9,7 @@ const {
   resizeProductImages,
   createFilterObj,
   setshopIdAndUserIdToBody,
+  getproducttoBigData,
 } = require("../services/productservice");
 const {
   createProductValidator,
@@ -55,5 +56,5 @@ router
     deleteProductValidator,
     deleteProduct
   );
-
+ router.get("/bigdata/:id",getproducttoBigData)
 module.exports = router;
