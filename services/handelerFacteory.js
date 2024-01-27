@@ -1,6 +1,7 @@
-const asyncHandler = require('express-async-handler');
-const ApiError = require('../util/ApiErrors');
-const ApiFeatures = require('../util/ApiFeature');
+const asyncHandler = require("express-async-handler");
+const ApiError = require("../util/ApiErrors");
+const ApiFeatures = require("../util/ApiFeature");
+const Kafka = require("../config/kafka");
 
 exports.deleteOne = (Model) =>
   asyncHandler(async (req, res, next) => {
@@ -35,6 +36,7 @@ exports.updateOne = (Model) =>
 exports.createOne = (Model) =>
   asyncHandler(async (req, res) => {
     const newDoc = await Model.create(req.body);
+    Kafka.sendOrderData(newDoc);
     res.status(201).json({ data: newDoc });
   });
 
@@ -53,10 +55,11 @@ exports.getOne = (Model, populationOpt) =>
     if (!document) {
       return next(new ApiError(`No document for this id ${id}`, 404));
     }
+    Kafka.sendOrderData(document);
     res.status(200).json({ data: document });
   });
 
-exports.getAll = (Model, modelName = '') =>
+exports.getAll = (Model, modelName = "") =>
   asyncHandler(async (req, res) => {
     let filter = {};
     if (req.filterObj) {
@@ -74,7 +77,7 @@ exports.getAll = (Model, modelName = '') =>
     // Execute query
     const { mongooseQuery, paginationResult } = apiFeatures;
     const documents = await mongooseQuery;
-
+    Kafka.sendOrderData(documents);
     res
       .status(200)
       .json({ results: documents.length, paginationResult, data: documents });
