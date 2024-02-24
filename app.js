@@ -9,6 +9,7 @@ const mountRoutes = require("./routes");
 const cors = require("cors");
 const compression = require("compression");
 const GlobalError = require("./middleware/errorMiddleware");
+const { webhookCheckout } = require("./services/orderservices");
 dotenv.config({ path: "config.env" });
 // db connection
 db();
@@ -19,6 +20,13 @@ app.use(cors());
 app.options("*", cors());
 // compress all responses
 app.use(compression());
+
+//checkout webhook
+app.post(
+  "/webhook-checkout",
+  express.raw({ type: "application/json" }),
+  webhookCheckout
+);
 
 //middleware
 app.use(express.json());
