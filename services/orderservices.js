@@ -8,6 +8,7 @@ const ApiFeatures = require("../util/ApiFeature");
 const Order = require("../model/ordermodel");
 const Cart = require("../model/cartmodel");
 const Product = require("../model/productmodel");
+const  User = require("../model/usermodel");
 const { updateOne } = require("../model/usermodel");
 
 exports.createCashOrder = asyncHandler(async (req, res, next) => {
