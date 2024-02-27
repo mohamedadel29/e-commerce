@@ -108,14 +108,18 @@ const setImageURL = (doc) => {
   }
   if (doc.image) {
     const imagesList = [];
+    var imageUrls
     doc.image.forEach((image) => {
-      let imageUrl = `http://localhost:${process.env.PORT}/products/${image}`;
+       imageUrls = `http://localhost:${process.env.PORT}/products/${image}`;
       process.env.NODE_ENV == 'production' &&
-			  (imageUrl = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${image}`);
-      imagesList.push(imageUrl);
+			  (imageUrls = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${image}`);
+      imagesList.push(imageUrls);
+      console.log(image);
+      console.log(imagesList);
     });
-    doc.image = imageUrl + 'products/' + doc.image;
+    doc.image = imagesList;
   }
+  console.log(doc.image);
 };
 // findOne, findAll and update
 productSchema.post('init', (doc) => {
