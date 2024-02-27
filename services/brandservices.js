@@ -51,8 +51,8 @@ const getbrand= async (req,res,next)=>{
 }
 const createbrand=async(req,res)=>{
     try {
-        const {name}=req.body;
-        const newbrand =await brandmodel.create({name,slug:slugify(name)}) 
+        const {name,image}=req.body;
+        const newbrand =await brandmodel.create({name,image,slug:slugify(name)}) 
         res.status(201).json({message:"done",data:newbrand})      
     } catch (error) {
         res.status(400).json({message:"error",error})
