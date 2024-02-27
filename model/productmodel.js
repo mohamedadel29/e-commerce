@@ -101,16 +101,20 @@ productSchema.pre(/^find/, function (next) {
 
 const setImageURL = (doc) => {
   if (doc.imagecover) {
-    const imageUrl = `http://localhost:${process.env.PORT}/products/${doc.imagecover}`;
-    doc.imagecover = imageUrl;
+    let imageUrl = `http://localhost:${process.env.PORT}/`;
+    process.env.NODE_ENV == 'production' &&
+			(imageUrl = process.env.STATIC_CONTENT_SERVER_HOST);
+    doc.imagecover = imageUrl + 'brands/' + doc.imagecover;
   }
   if (doc.image) {
     const imagesList = [];
     doc.image.forEach((image) => {
-      const imageUrl = `http://localhost:${process.env.PORT}/products/${image}`;
+      let imageUrl = `http://localhost:${process.env.PORT}/products/${image}`;
+      process.env.NODE_ENV == 'production' &&
+			  (imageUrl = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${image}`);
       imagesList.push(imageUrl);
     });
-    doc.image = imagesList;
+    doc.image = imageUrl + 'products/' + doc.image;
   }
 };
 // findOne, findAll and update
@@ -125,3 +129,4 @@ productSchema.post('save', (doc) => {
 
 
 module.exports=mongoose.model("product",productSchema)
+

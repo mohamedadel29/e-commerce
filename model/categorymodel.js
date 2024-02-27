@@ -21,10 +21,12 @@ const categoryschema=new mongoose.Schema({
 
 
 const setImageURL = (doc) => {
-    if (doc.image) {
-      const imageUrl = `http://localhost:${process.env.PORT}/categories/${doc.image}`;
-      doc.image = imageUrl;
-    }
+  if (doc.image) {
+    let imageUrl = `http://localhost:${process.env.PORT}/`;
+    process.env.NODE_ENV == 'production' &&
+			(imageUrl = process.env.STATIC_CONTENT_SERVER_HOST);
+    doc.image = imageUrl + 'categories/' + doc.image;
+  }
   };
 
   // findOne, findAll and update
