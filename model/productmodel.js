@@ -104,7 +104,7 @@ const setImageURL = (doc) => {
     let imageUrl = `http://localhost:${process.env.PORT}/`;
     process.env.NODE_ENV == 'production' &&
 			(imageUrl = process.env.STATIC_CONTENT_SERVER_HOST);
-    doc.imagecover = imageUrl + 'brands/' + doc.imagecover;
+    doc.imagecover = imageUrl + 'products/' + doc.imagecover;
   }
   if (doc.image) {
     const imagesList = [];
