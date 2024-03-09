@@ -101,10 +101,12 @@ productSchema.pre(/^find/, function (next) {
 
 const setImageURL = (doc) => {
   if (doc.imagecover) {
-    let imageUrl = `http://localhost:${process.env.PORT}/`;
+    let imageUrl = `http://localhost:${process.env.PORT}/products/${doc.imagecover}`;
     process.env.NODE_ENV == 'production' &&
-			(imageUrl = process.env.STATIC_CONTENT_SERVER_HOST);
-    doc.imagecover = imageUrl + 'products/' + doc.imagecover;
+			(imageUrl =`${process.env.STATIC_CONTENT_SERVER_HOST}products/${doc.imagecover}`) ;
+    doc.imagecover = imageUrl;
+    console.log(imageUrl);
+    console.log(doc.imagecover);
   }
   if (doc.image) {
     const imagesList = [];
@@ -114,7 +116,7 @@ const setImageURL = (doc) => {
       process.env.NODE_ENV == 'production' &&
 			  (imageUrls = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${image}`);
       imagesList.push(imageUrls);
-      console.log(image);
+      //console.log(image);
       console.log(imagesList);
     });
     doc.image = imagesList;
@@ -122,7 +124,7 @@ const setImageURL = (doc) => {
   console.log(doc.image);
 };
 // findOne, findAll and update
-productSchema.post('init', (doc) => {
+productSchema.pre('init', (doc) => {
   setImageURL(doc);
 });
 
