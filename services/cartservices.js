@@ -61,7 +61,7 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
 });
 
 exports.getLoggedCart = asyncHandler(async (req, res, next) => {
-  const cart = await Cart.findOne({ user: req.user._id });
+  const cart = await Cart.findOne({ user: req.user._id }).populate('cartItems.product');;
   if (!cart) {
     return next(
       new ApiError(`there is not cart for this id ${req.user._id}`, 404)
@@ -76,7 +76,7 @@ exports.getLoggedCart = asyncHandler(async (req, res, next) => {
 
 exports.clearcart = asyncHandler(async (req, res, next) => {
   const cart = await Cart.findOneAndDelete({ user: req.user._id });
-  res.status(204).json({ message: "deleted" });
+  res.status(200).json({ message: "deleted" });
 });
 
 exports.deleteSpesficItemInCart = asyncHandler(async (req, res, next) => {
