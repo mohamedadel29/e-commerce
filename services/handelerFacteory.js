@@ -13,7 +13,7 @@ exports.deleteOne = (Model) =>
     }
 
     // Trigger "remove" event when update document
-    document.remove();
+    //document.remove();
     res.status(204).send();
   });
 

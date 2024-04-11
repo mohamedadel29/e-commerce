@@ -5,7 +5,7 @@ const Category = require('../../model/categorymodel');
 const SubCategory = require('../../model/subcategorymodel');
 
 exports.createProductValidator = [
-  check('title')
+  check('name')
     .isLength({ min: 3 })
     .withMessage('must be at least 3 chars')
     .notEmpty()
@@ -126,7 +126,7 @@ exports.getProductValidator = [
 
 exports.updateProductValidator = [
   check('id').isMongoId().withMessage('Invalid ID formate'),
-  body('title')
+  body('name')
     .optional()
     .custom((val, { req }) => {
       req.body.slug = slugify(val);
