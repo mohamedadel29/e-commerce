@@ -10,6 +10,7 @@ const {
   createFilterObj,
   setshopIdAndUserIdToBody,
   getproducttoBigData,
+  getproductbycategory,
 } = require("../services/productservice");
 const {
   createProductValidator,
@@ -17,22 +18,22 @@ const {
   updateProductValidator,
   deleteProductValidator,
 } = require("../util/validator/productValidator");
-const authService = require('../services/authservices');
-const reviewsRoute = require('./reviewrouthes');
+const authService = require("../services/authservices");
+const reviewsRoute = require("./reviewrouthes");
 
-const router = express.Router({mergeParams:true});
+const router = express.Router({ mergeParams: true });
 
 // POST   /products/jkshjhsdjh2332n/reviews
 // GET    /products/jkshjhsdjh2332n/reviews
 // GET    /products/jkshjhsdjh2332n/reviews/87487sfww3
-router.use('/:productId/reviews', reviewsRoute);
+router.use("/:productId/reviews", reviewsRoute);
 
 router
-  .route('/')
-  .get(createFilterObj,getProducts)
+  .route("/")
+  .get(createFilterObj, getProducts)
   .post(
     authService.protect,
-    authService.allowedto('admin', 'manager'),
+    authService.allowedto("admin", "manager"),
     setshopIdAndUserIdToBody,
     uploadProductImages,
     resizeProductImages,
@@ -40,11 +41,11 @@ router
     createProduct
   );
 router
-  .route('/:id')
+  .route("/:id")
   .get(getProductValidator, getProduct)
   .put(
     authService.protect,
-    authService.allowedto('admin', 'manager'),
+    authService.allowedto("admin", "manager"),
     uploadProductImages,
     resizeProductImages,
     updateProductValidator,
@@ -52,9 +53,10 @@ router
   )
   .delete(
     authService.protect,
-    authService.allowedto('admin'),
+    authService.allowedto("admin"),
     deleteProductValidator,
     deleteProduct
   );
- router.get("/bigdata/:id",getproducttoBigData)
+router.get("/bigdata/:id", getproducttoBigData);
+router.get("/category/:categoryid",authService.protect,authService.allowedto("user"),getproductbycategory);
 module.exports = router;

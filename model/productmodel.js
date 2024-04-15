@@ -105,8 +105,8 @@ const setImageURL = (doc) => {
     process.env.NODE_ENV == 'production' &&
 			(imageUrl =`${process.env.STATIC_CONTENT_SERVER_HOST}products/${doc.imagecover}`) ;
     doc.imagecover = imageUrl;
-    console.log(imageUrl);
-    console.log(doc.imagecover);
+    // console.log(imageUrl);
+    // console.log(doc.imagecover);
   }
   if (doc.image) {
     const imagesList = [];
@@ -117,11 +117,11 @@ const setImageURL = (doc) => {
 			  (imageUrls = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${image}`);
       imagesList.push(imageUrls);
       //console.log(image);
-      console.log(imagesList);
+     // console.log(imagesList);
     });
     doc.image = imagesList;
   }
-  console.log(doc.image);
+ // console.log(doc.image);
 };
 // findOne, findAll and update
 productSchema.pre('init', (doc) => {

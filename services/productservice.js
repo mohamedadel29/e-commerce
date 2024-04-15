@@ -94,3 +94,21 @@ exports.updateProduct = factory.updateOne(Product);
 // @route   DELETE /api/v1/products/:id
 // @access  Private
 exports.deleteProduct = factory.deleteOne(Product);
+
+
+
+exports.getproductbycategory=asyncHandler(async(req,res)=>{
+  const categoryid = req.params.categoryid;
+  const products = await Product.find({ category: categoryid });
+
+  // Check if products is an object
+  if (typeof products === 'object' && products !== null) {
+      // Get the number of properties in the object
+      const numberOfProducts = Object.keys(products).length;
+      if (numberOfProducts === 0) {
+          res.status(404).json({ message: "No products found" });
+      } else {
+          // Handle the case where products is an object with properties
+          res.status(200).json(products);
+      }
+}})
