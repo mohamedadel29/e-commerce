@@ -68,6 +68,10 @@ const productSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shop",
     },
+    wishlistflag:{
+      type : Boolean ,
+      default : false
+    },
     ratingsAverage: {
       type: Number,
       min:[1,"rating must be above or equal 1"],

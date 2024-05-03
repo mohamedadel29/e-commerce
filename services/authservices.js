@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const ApiError = require("../util/ApiErrors");
 const crypto = require("crypto");
 const sendEmail = require("../util/sendEmail");
-const asyncHandler=require("express-async-handler")
+const asyncHandler = require("express-async-handler");
 exports.signup = async (req, res, next) => {
   const user = await usermodel.create(req.body);
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRECT_KEY, {
@@ -30,6 +30,8 @@ exports.login = async (req, res, next) => {
         process.env.JWT_SECRECT_KEY,
         { expiresIn: "90d" }
       );
+      user.active=true
+      await  user.save();
       delete user._doc.password;
       res.status(200).send({ data: user, token });
     }
@@ -42,14 +44,14 @@ exports.protect = asyncHandler(async (req, res, next) => {
   let token;
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
+    req.headers.authorization.startsWith("Bearer")
   ) {
-    token = req.headers.authorization.split(' ')[1];
+    token = req.headers.authorization.split(" ")[1];
   }
   if (!token) {
     return next(
       new ApiError(
-        'You are not login, Please login to get access this route',
+        "You are not login, Please login to get access this route",
         401
       )
     );
@@ -63,7 +65,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   if (!currentUser) {
     return next(
       new ApiError(
-        'The user that belong to this token does no longer exist',
+        "The user that belong to this token does no longer exist",
         401
       )
     );
@@ -79,7 +81,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
     if (passChangedTimestamp > decoded.iat) {
       return next(
         new ApiError(
-          'User recently changed his password. please login again..',
+          "User recently changed his password. please login again..",
           401
         )
       );
@@ -90,7 +92,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
   console.log(req.user._id);
   next();
 });
-
 exports.allowedto =
   (...roles) =>
   async (req, res, next) => {
@@ -116,13 +117,12 @@ exports.forgetPassword = async (req, res, next) => {
     user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
     user.passwordResetVerified = false;
     user.save();
-    const message=`HI ${user.name},we recoved to rest the password on your e=shop account \n ${resetCode} thanks to me`
+    const message = `HI ${user.name},we recoved to rest the password on your e=shop account \n ${resetCode} thanks to me`;
     await sendEmail({
       email: user.email,
       subject: `your password reset code(valid for 10 min)`,
       text: message,
     });
-    
   } catch (error) {
     user.passwordResetCode = undefined;
     user.passwordResetExpires = undefined;
@@ -132,22 +132,22 @@ exports.forgetPassword = async (req, res, next) => {
     error.statusCode = 500;
     next(new ApiError(error));
   }
-  res.status(200).json({ status: 'Success',message: "mail sent" });
+  res.status(200).json({ status: "Success", message: "mail sent" });
 };
 
 exports.verifyPassResetCode = async (req, res, next) => {
   // 1) Get user based on reset code
   const hashedResetCode = crypto
-    .createHash('sha256')
+    .createHash("sha256")
     .update(req.body.resetCode)
-    .digest('hex');
+    .digest("hex");
 
   const user = await usermodel.findOne({
     passwordResetCode: hashedResetCode,
     passwordResetExpires: { $gt: Date.now() },
   });
   if (!user) {
-    return next(new ApiError('Reset code invalid or expired'));
+    return next(new ApiError("Reset code invalid or expired"));
   }
 
   // 2) Reset code valid
@@ -155,10 +155,9 @@ exports.verifyPassResetCode = async (req, res, next) => {
   await user.save();
 
   res.status(200).json({
-    status: 'Success',
+    status: "Success",
   });
 };
-
 
 exports.resetPassword = async (req, res, next) => {
   // 1) Get user based on email
@@ -171,7 +170,7 @@ exports.resetPassword = async (req, res, next) => {
 
   // 2) Check if reset code verified
   if (!user.passwordResetVerified) {
-    return next(new ApiError('Reset code not verified', 400));
+    return next(new ApiError("Reset code not verified", 400));
   }
 
   user.password = req.body.newPassword;
@@ -182,12 +181,8 @@ exports.resetPassword = async (req, res, next) => {
   await user.save();
 
   // 3) if everything is ok, generate token
-  const token = jwt.sign(
-    { userId: user._id },
-    process.env.JWT_SECRECT_KEY,
-    { expiresIn: "90d" }
-  );
-  res.status(200).json({ message:"success",token });
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRECT_KEY, {
+    expiresIn: "90d",
+  });
+  res.status(200).json({ message: "success", token });
 };
-
-

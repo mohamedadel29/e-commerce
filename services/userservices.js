@@ -126,6 +126,54 @@ const getloggedUserData = async (req, res, next) => {
   
 };
 
+// @desc    Update logged user password
+// @route   PUT /api/v1/users/updateMyPassword
+// @access  Private/Protect
+const updateLoggedUserPassword = asyncHandler(async (req, res, next) => {
+  // 1) Update user password based user payload (req.user._id)
+  const user = await usermodel.findByIdAndUpdate(
+    req.user._id,
+    {
+      password: await bcrypt.hash(req.body.password, 12),
+      passwordChangedAt: Date.now(),
+    },
+    {
+      new: true,
+    }
+  );
+
+  // 2) Generate token
+  const token = createToken(user._id);
+
+  res.status(200).json({ data: user, token });
+});
+
+// @desc    Update logged user data (without password, role)
+// @route   PUT /api/v1/users/updateMe
+// @access  Private/Protect
+const updateLoggedUserData = asyncHandler(async (req, res, next) => {
+  const updatedUser = await usermodel.findByIdAndUpdate(
+    req.user._id,
+    {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+    },
+    { new: true }
+  );
+
+  res.status(200).json({ data: updatedUser });
+});
+
+// @desc    Deactivate logged user
+// @route   DELETE /api/v1/users/deleteMe
+// @access  Private/Protect
+const deleteLoggedUserData = asyncHandler(async (req, res, next) => {
+  await usermodel.findByIdAndUpdate(req.user._id, { active: false });
+
+  res.status(204).json({ status: 'Success' });
+});
+
 module.exports = {
   getALLUser,
   getUser,
@@ -136,18 +184,8 @@ module.exports = {
   resizeImage,
   changeuserpassword,
   getloggedUserData,
+  deleteLoggedUserData,
+  updateLoggedUserData,
+  updateLoggedUserPassword
 };
 
-
-// try {
-//   req.params.id=req.user.id
-//   const spefic = await usermodel.findById(req.params.id);
-//   if (!spefic) {
-//     return next(new ApiError(`no brand found with this ${id}`, 404));
-//   } else {
-//     res.status(201).json({ message: "done", data: spefic });
-//   }
-// } catch (error) {
-//   console.log(error);
-//   res.status(404).json({message:"err",data:error})
-// }
