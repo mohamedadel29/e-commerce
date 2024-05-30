@@ -12,6 +12,7 @@ const cartroute=require('./cartroute')
 const orderroute=require('./orderroutes')
 const shoproute=require('./shoproutes')
 const exportroute=require('./exportroute')
+const dashboardroute=require('./dashboardroutes.js')
 //const kafkaroute=require('./kafkaroute.js')
 
  
@@ -31,6 +32,7 @@ app.use("/api/v1/cart", cartroute);
 app.use("/api/v1/orders", orderroute);
 app.use("/api/v1/exports", exportroute);
 app.use("/api/v1/shop",shoproute)
+app.use("/api/v1/dashboard",dashboardroute)
 //app.use("/api/v1/kafka",kafkaroute)
 
 

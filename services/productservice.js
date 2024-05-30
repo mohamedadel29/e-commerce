@@ -67,18 +67,25 @@ exports.getProducts = factory.getAll(Product, "Products");
 exports.getProduct = factory.getOne(Product, "reviews");
 ////Bigdata
 exports.getproducttoBigData = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const product = await Product.findById(id);
-  const {  quantity, sold, price } = product;
-  const real = { id, quantity, sold, price };
-  console.log(real);
-  Kafka.sendOrderData(real);
-  res.status(200).json({
-    id: id,
-    quantity,
-    sold,
-    price,
-  });
+  const products = await Product.find(); // Retrieve all products
+  const productsData = [];
+
+  // Iterate over each product
+  for (const product of products) {
+    const { name, quantity, sold, price } = product;
+
+    // Check if the name is not null
+    if (name !== null && name !== undefined) {
+      const productData = { name, quantity, sold, price };
+      // Send product data to Kafka
+      Kafka.sendOrderData(productData);
+
+      // Add product data to productsData array
+      productsData.push(productData);
+    }
+  }
+
+  res.status(200).json(productsData);
 });
 
 // @desc    Create product
@@ -95,20 +102,19 @@ exports.updateProduct = factory.updateOne(Product);
 // @access  Private
 exports.deleteProduct = factory.deleteOne(Product);
 
-
-
-exports.getproductbycategory=asyncHandler(async(req,res)=>{
+exports.getproductbycategory = asyncHandler(async (req, res) => {
   const categoryid = req.params.categoryid;
   const products = await Product.find({ category: categoryid });
 
   // Check if products is an object
-  if (typeof products === 'object' && products !== null) {
-      // Get the number of properties in the object
-      const numberOfProducts = Object.keys(products).length;
-      if (numberOfProducts === 0) {
-          res.status(404).json({ message: "No products found" });
-      } else {
-          // Handle the case where products is an object with properties
-          res.status(200).json(products);
-      }
-}})
+  if (typeof products === "object" && products !== null) {
+    // Get the number of properties in the object
+    const numberOfProducts = Object.keys(products).length;
+    if (numberOfProducts === 0) {
+      res.status(404).json({ message: "No products found" });
+    } else {
+      // Handle the case where products is an object with properties
+      res.status(200).json(products);
+    }
+  }
+});
