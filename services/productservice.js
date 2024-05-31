@@ -72,11 +72,11 @@ exports.getproducttoBigData = asyncHandler(async (req, res) => {
 
   // Iterate over each product
   for (const product of products) {
-    const { name, quantity, sold, price } = product;
+    const {_id, name, quantity, sold, price } = product;
 
     // Check if the name is not null
     if (name !== null && name !== undefined) {
-      const productData = { name, quantity, sold, price };
+      const productData = { _id,name, quantity, sold, price };
       // Send product data to Kafka
       Kafka.sendOrderData(productData);
 
