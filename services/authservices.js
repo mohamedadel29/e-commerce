@@ -30,8 +30,8 @@ exports.login = async (req, res, next) => {
         process.env.JWT_SECRECT_KEY,
         { expiresIn: "90d" }
       );
-      user.active=true
-      await  user.save();
+      user.active = true;
+      await user.save();
       delete user._doc.password;
       res.status(200).send({ data: user, token });
     }
@@ -101,39 +101,52 @@ exports.allowedto =
     next();
   };
 
-exports.forgetPassword = async (req, res, next) => {
-  try {
-    const user = await usermodel.findOne({ email: req.body.email });
-    if (!user) {
-      throw Error("Email Not Found");
-    }
+  exports.forgetPassword = asyncHandler(async (req, res, next) => {
+   // 1) Get user by email
+  const user = await usermodel.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new ApiError(`There is no user with that email ${req.body.email}`, 404));
+  }
 
-    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const hashResetCode = crypto
-      .createHash("sha256")
-      .update(resetCode)
-      .digest("hex");
-    user.passwordResetCode = hashResetCode;
-    user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-    user.passwordResetVerified = false;
-    user.save();
-    const message = `HI ${user.name},we recoved to rest the password on your e=shop account \n ${resetCode} thanks to me`;
+  // 2) If user exists, generate a hashed reset code and save it in the database
+  const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const hashedResetCode = crypto.createHash('sha256').update(resetCode).digest('hex');
+
+  user.passwordResetCode = hashedResetCode;
+  user.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes from now
+  user.passwordResetVerified = false;
+
+  await user.save();
+
+  // 3) Send the reset code via email
+  const message = `
+    Hi ${user.name},
+    We received a request to reset the password on your E-shop Account.
+    ${resetCode}
+    Enter this code to complete the reset.
+    Thanks for helping us keep your account secure.
+    The E-shop Team
+  `;
+
+  try {
     await sendEmail({
       email: user.email,
-      subject: `your password reset code(valid for 10 min)`,
+      subject: 'Your password reset code (valid for 10 min)',
       text: message,
     });
-  } catch (error) {
+    res.status(200).json({ status: 'Success', message: 'Reset code sent to email' });
+  } catch (err) {
     user.passwordResetCode = undefined;
     user.passwordResetExpires = undefined;
     user.passwordResetVerified = undefined;
-
+  
     await user.save();
-    error.statusCode = 500;
-    next(new ApiError(error));
+  
+    res.status(500).json({status:'failed', err: err});
   }
-  res.status(200).json({ status: "Success", message: "mail sent" });
-};
+
+
+});
 
 exports.verifyPassResetCode = async (req, res, next) => {
   // 1) Get user based on reset code
