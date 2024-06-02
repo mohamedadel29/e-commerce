@@ -36,7 +36,7 @@ exports.updateOne = (Model) =>
 exports.createOne = (Model) =>
   asyncHandler(async (req, res) => {
     const newDoc = await Model.create(req.body);
-    Kafka.sendOrderData(newDoc);
+    //Kafka.sendOrderData(newDoc);
     res.status(201).json({ data: newDoc });
   });
 
@@ -55,7 +55,7 @@ exports.getOne = (Model, populationOpt) =>
     if (!document) {
       return next(new ApiError(`No document for this id ${id}`, 404));
     }
-    Kafka.sendOrderData(document);
+    //Kafka.sendOrderData(document);
     res.status(200).json({ data: document });
   });
 
@@ -77,7 +77,7 @@ exports.getAll = (Model, modelName = "") =>
     // Execute query
     const { mongooseQuery, paginationResult } = apiFeatures;
     const documents = await mongooseQuery;
-    Kafka.sendOrderData(documents);
+    //Kafka.sendOrderData(documents);
     res
       .status(200)
       .json({ results: documents.length, paginationResult, data: documents });
