@@ -106,29 +106,26 @@ productSchema.pre(/^find/, function (next) {
 const setImageURL = (doc) => {
   if (doc.imagecover) {
     let imageUrl = `http://localhost:${process.env.PORT}/products/${doc.imagecover}`;
-    process.env.NODE_ENV == 'production' &&
-			(imageUrl =`${process.env.STATIC_CONTENT_SERVER_HOST}products/${doc.imagecover}`) ;
+    if (process.env.NODE_ENV === 'production') {
+      imageUrl = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${doc.imagecover}`;
+    }
     doc.imagecover = imageUrl;
-    // console.log(imageUrl);
-    // console.log(doc.imagecover);
   }
-  if (doc.image) {
-    const imagesList = [];
-    var imageUrls
-    doc.image.forEach((image) => {
-       imageUrls = `http://localhost:${process.env.PORT}/products/${image}`;
-      process.env.NODE_ENV == 'production' &&
-			  (imageUrls = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${image}`);
-      imagesList.push(imageUrls);
-      //console.log(image);
-     // console.log(imagesList);
+
+  if (doc.image && Array.isArray(doc.image)) {
+    const imagesList = doc.image.map((image) => {
+      let imageUrl = `http://localhost:${process.env.PORT}/products/${image}`;
+      if (process.env.NODE_ENV === 'production') {
+        imageUrl = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${image}`;
+      }
+      return imageUrl;
     });
     doc.image = imagesList;
   }
- // console.log(doc.image);
 };
+
 // findOne, findAll and update
-productSchema.pre('init', (doc) => {
+productSchema.post('init', (doc) => {
   setImageURL(doc);
 });
 
@@ -136,6 +133,7 @@ productSchema.pre('init', (doc) => {
 productSchema.post('save', (doc) => {
   setImageURL(doc);
 });
+
 
 // productSchema.pre('remove', (doc)=> {
 //   // Here you can add whatever logic needs to run before a product is removed.

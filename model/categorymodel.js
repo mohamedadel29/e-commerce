@@ -22,12 +22,15 @@ const categoryschema=new mongoose.Schema({
 
 const setImageURL = (doc) => {
   if (doc.image) {
-    let imageUrl = `http://localhost:${process.env.PORT}/`;
-    process.env.NODE_ENV == 'production' &&
-			(imageUrl = process.env.STATIC_CONTENT_SERVER_HOST);
+    let imageUrl;
+    if (process.env.NODE_ENV === 'production') {
+      imageUrl = process.env.STATIC_CONTENT_SERVER_HOST;
+    } else {
+      imageUrl = `http://localhost:${process.env.PORT}/`;
+    }
     doc.image = imageUrl + 'categories/' + doc.image;
   }
-  };
+};
 
   // findOne, findAll and update
   categoryschema.post('init', (doc) => {
