@@ -137,16 +137,16 @@ productSchema.post('save', (doc) => {
   setImageURL(doc);
 });
 
-productSchema.pre('remove', (doc)=> {
-  // Here you can add whatever logic needs to run before a product is removed.
-  // For example, deleting associated reviews or other related records.
-  console.log(`Preparing to remove product with id: ${this._id}`);
-  next();
-});
-productSchema.post('remove', function(doc) {
-  // This will run after the document is removed.
-  // You can perform cleanup operations here, like logging or further database cleanups.
-  console.log(`Product with id: ${doc._id} was removed`);
-});
+// productSchema.pre('remove', (doc)=> {
+//   // Here you can add whatever logic needs to run before a product is removed.
+//   // For example, deleting associated reviews or other related records.
+//   console.log(`Preparing to remove product with id: ${this._id}`);
+//   next();
+// });
+// productSchema.post('remove', function(doc) {
+//   // This will run after the document is removed.
+//   // You can perform cleanup operations here, like logging or further database cleanups.
+//   console.log(`Product with id: ${doc._id} was removed`);
+// });
 module.exports=mongoose.model("product",productSchema)
 

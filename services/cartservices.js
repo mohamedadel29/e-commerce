@@ -28,7 +28,7 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
         {
           product: productId,
           color,
-          title: product.title,
+          name: product.name,
           price: product.price,
         },
       ],

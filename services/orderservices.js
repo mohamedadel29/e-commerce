@@ -45,7 +45,7 @@ exports.createCashOrder = asyncHandler(async (req, res, next) => {
     await Product.bulkWrite(bulkOption, {});
     await Cart.findByIdAndDelete(req.params.cartId);
   }
-  Kafka.sendOrderData(order);
+  //Kafka.sendOrderData(order);
   res.status(201).json({ status: "success", data: order });
 });
 

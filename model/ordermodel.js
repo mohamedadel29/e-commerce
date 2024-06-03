@@ -16,6 +16,7 @@ const orderSchema = new mongoose.Schema(
         quantity: Number,
         color: String,
         price: Number,
+        name:String
       },
     ],
     taxPrice: {
@@ -59,8 +60,8 @@ orderSchema.pre(/^find/, function (next) {
     path: "user",
     select: "name email phone",
   }).populate({
-    path: "cartItems.product",
-    select: "title imagecover ",
+    path: "cartItems",
+    select: "name",
   });
   next();
 });
