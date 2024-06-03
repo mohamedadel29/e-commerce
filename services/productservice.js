@@ -5,40 +5,69 @@ const { uploadMixOfImages } = require("../middleware/uploadImageMiddleware");
 const factory = require("./handelerFacteory");
 const Product = require("../model/productmodel");
 const Kafka = require("../config/kafka");
+const cloudinary=require("../util/Cloudinary")
 
 exports.uploadProductImages = uploadMixOfImages([
   { name: "imagecover", maxCount: 1 },
   { name: "image", maxCount: 5 },
 ]);
 
+// Helper function to upload image buffer to Cloudinary
+const uploadToCloudinary = (buffer, folder, publicId) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: folder,
+        public_id: publicId,
+        transformation: [
+          { width: 2000, height: 1333, crop: "limit" },
+          { format: 'jpeg', quality: 'auto' }
+        ]
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result.secure_url);
+        }
+      }
+    );
+
+    stream.end(buffer);
+  });
+};
+
+// Image processing and uploading to Cloudinary
 exports.resizeProductImages = asyncHandler(async (req, res, next) => {
   if (req.files.imagecover) {
-    const imagecoverfilename = `product-${uuidv4()}-${Date.now()}-cover.jpeg`;
-    await sharp(req.files.imagecover[0].buffer)
-      .resize(2000, 1333)
-      .toFormat("jpeg")
-      .jpeg({ quality: 95 })
-      .toFile(`uploads/products/${imagecoverfilename}`);
-    //save
-    console.log(imagecoverfilename);
-    req.body.imagecover = imagecoverfilename;
+    const imageCoverFilename = `product-${uuidv4()}-${Date.now()}-cover.jpeg`;
+    
+    // Upload image cover to Cloudinary
+    try {
+      const imageCoverUrl = await uploadToCloudinary(req.files.imagecover[0].buffer, 'products', imageCoverFilename);
+      req.body.imagecover = imageCoverUrl;
+    } catch (error) {
+      return next(error);
+    }
   }
+
   if (req.files.image) {
     req.body.image = [];
-    await Promise.all(
-      req.files.image.map(async (img, index) => {
-        const imagename = `product-${uuidv4()}-${Date.now()}-${index + 1}.jpeg`;
-        await sharp(img.buffer)
-          .resize(2000, 1333)
-          .toFormat("jpeg")
-          .jpeg({ quality: 95 })
-          .toFile(`uploads/products/${imagename}`);
-        console.log(imagename);
-        //save
-        req.body.image.push(imagename);
-      })
-    );
+    try {
+      await Promise.all(
+        req.files.image.map(async (img, index) => {
+          const imageName = `product-${uuidv4()}-${Date.now()}-${index + 1}.jpeg`;
+          
+          // Upload image to Cloudinary
+          const imageUrl = await uploadToCloudinary(img.buffer, 'products', imageName);
+          req.body.image.push(imageUrl);
+        })
+      );
+    } catch (error) {
+      return next(error);
+    }
   }
+
   next();
 });
 

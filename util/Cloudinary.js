@@ -1,11 +1,16 @@
 const Cloudinary=require("cloudinary").v2
-
-//import {v2 as cloudinary} from 'cloudinary';
+const dotenv = require("dotenv");
+const { fileURLToPath } =require("url")
+const path=require("path")
           
-cloudinary.config({ 
+//const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({path: path.join(__dirname, '../config.env')});
+
+Cloudinary.config({ 
   cloud_name: process.env.CLOUD_NAME, 
   api_key: process.env.CLOUD_API_KEY, 
-  api_secret: process.env.CLOUD_API_SECERT 
+  api_secret: process.env.CLOUD_API_SECERT ,
+  secure:true
 });
 
-module.exports=cloudinary
+module.exports=Cloudinary

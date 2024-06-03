@@ -103,36 +103,36 @@ productSchema.pre(/^find/, function (next) {
 });
 
 
-const setImageURL = (doc) => {
-  if (doc.imagecover) {
-    let imageUrl = `http://localhost:${process.env.PORT}/products/${doc.imagecover}`;
-    if (process.env.NODE_ENV === 'production') {
-      imageUrl = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${doc.imagecover}`;
-    }
-    doc.imagecover = imageUrl;
-  }
+// const setImageURL = (doc) => {
+//   if (doc.imagecover) {
+//     let imageUrl = `http://localhost:${process.env.PORT}/products/${doc.imagecover}`;
+//     if (process.env.NODE_ENV === 'production') {
+//       imageUrl = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${doc.imagecover}`;
+//     }
+//     doc.imagecover = imageUrl;
+//   }
 
-  if (doc.image && Array.isArray(doc.image)) {
-    const imagesList = doc.image.map((image) => {
-      let imageUrl = `http://localhost:${process.env.PORT}/products/${image}`;
-      if (process.env.NODE_ENV === 'production') {
-        imageUrl = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${image}`;
-      }
-      return imageUrl;
-    });
-    doc.image = imagesList;
-  }
-};
+//   if (doc.image && Array.isArray(doc.image)) {
+//     const imagesList = doc.image.map((image) => {
+//       let imageUrl = `http://localhost:${process.env.PORT}/products/${image}`;
+//       if (process.env.NODE_ENV === 'production') {
+//         imageUrl = `${process.env.STATIC_CONTENT_SERVER_HOST}products/${image}`;
+//       }
+//       return imageUrl;
+//     });
+//     doc.image = imagesList;
+//   }
+// };
 
-// findOne, findAll and update
-productSchema.post('init', (doc) => {
-  setImageURL(doc);
-});
+// // findOne, findAll and update
+// productSchema.post('init', (doc) => {
+//   setImageURL(doc);
+// });
 
-// create
-productSchema.post('save', (doc) => {
-  setImageURL(doc);
-});
+// // create
+// productSchema.post('save', (doc) => {
+//   setImageURL(doc);
+// });
 
 
 // productSchema.pre('remove', (doc)=> {

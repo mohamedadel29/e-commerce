@@ -20,27 +20,27 @@ const categoryschema=new mongoose.Schema({
 },{timestamps:true})
 
 
-const setImageURL = (doc) => {
-  if (doc.image) {
-    let imageUrl;
-    if (process.env.NODE_ENV === 'production') {
-      imageUrl = process.env.STATIC_CONTENT_SERVER_HOST;
-    } else {
-      imageUrl = `http://localhost:${process.env.PORT}/`;
-    }
-    doc.image = imageUrl + 'categories/' + doc.image;
-  }
-};
+// const setImageURL = (doc) => {
+//   if (doc.image) {
+//     let imageUrl;
+//     if (process.env.NODE_ENV === 'production') {
+//       imageUrl = process.env.STATIC_CONTENT_SERVER_HOST;
+//     } else {
+//       imageUrl = `http://localhost:${process.env.PORT}/`;
+//     }
+//     doc.image = imageUrl + 'categories/' + doc.image;
+//   }
+// };
 
-  // findOne, findAll and update
-  categoryschema.post('init', (doc) => {
-    setImageURL(doc);
-  });
+//   // findOne, findAll and update
+//   categoryschema.post('init', (doc) => {
+//     setImageURL(doc);
+//   });
   
-  // create
-  categoryschema.post('save', (doc) => {
-    setImageURL(doc);
-  });
+//   // create
+//   categoryschema.post('save', (doc) => {
+//     setImageURL(doc);
+//   });
 
 //create model
 const categorymodel=mongoose.model("categoey",categoryschema,)

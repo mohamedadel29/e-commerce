@@ -1,7 +1,7 @@
 const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const asyncHandler = require('express-async-handler');
-
+const cloudinary=require("../util/Cloudinary")
 const factory = require('./handelerFacteory');
 const { uploadSingleImage } = require('../middleware/uploadImageMiddleware');
 const Category = require('../model/categorymodel');
@@ -11,17 +11,39 @@ exports.uploadCategoryImage = uploadSingleImage('image');
 
 // Image processing
 exports.resizeImage = asyncHandler(async (req, res, next) => {
-  const filename = `category-${uuidv4()}-${Date.now()}.jpeg`;
-
   if (req.file) {
-    await sharp(req.file.buffer)
-      .resize(600, 600)
-      .toFormat('jpeg')
-      .jpeg({ quality: 95 })
-      .toFile(`uploads/categories/${filename}`);
+    const filename = `category-${uuidv4()}-${Date.now()}`;
+    
+    const cloudinaryUpload = async (buffer) => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: 'categories',
+            public_id: filename,
+            transformation: [
+              { width: 600, height: 600, crop: "limit" },
+              { format: 'jpeg', quality: 'auto' }
+            ]
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          }
+        );
 
-    // Save image into our db
-    req.body.image = filename;
+        stream.end(buffer);
+      });
+    };
+
+    try {
+      const result = await cloudinaryUpload(req.file.buffer);
+      req.body.image = result.secure_url;
+    } catch (error) {
+      return next(error);
+    }
   }
 
   next();

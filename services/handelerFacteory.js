@@ -36,7 +36,7 @@ exports.updateOne = (Model) =>
 exports.createOne = (Model) =>
   asyncHandler(async (req, res) => {
     const newDoc = await Model.create(req.body);
-    //Kafka.sendOrderData(newDoc);
+    console.log(newDoc);
     res.status(201).json({ data: newDoc });
   });
 
