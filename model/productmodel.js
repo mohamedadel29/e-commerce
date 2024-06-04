@@ -37,6 +37,7 @@ const productSchema = mongoose.Schema(
     },
     priceAfterDiscount: {
       type: Number,
+      default:0
     },
     color: [String],
     imagecover: {
