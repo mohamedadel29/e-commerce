@@ -59,10 +59,11 @@ orderSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
     select: "name email phone",
-  }).populate({
-    path: "cartItems",
-    select: "name",
-  });
+  })
+  // .populate({
+  //   path: "cartItems",
+  //   select: "product.name",
+  // });
   next();
 });
 

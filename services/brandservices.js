@@ -7,19 +7,53 @@ const ApiFeature=require("../util/ApiFeature")
 const { uploadSingleImage } = require("../middleware/uploadImageMiddleware");
 const { v4: uuidv4 } = require("uuid");
 const sharp = require("sharp");
+const cloudinary=require("../util/Cloudinary")
 
+// Upload single image
 const uploadCategoryImage = uploadSingleImage("image");
-const resizeImage = asyncHandler(async (req, res, next) => {
-  const filename = `brand-${uuidv4()}-${Date.now()}.jpeg`;
-  await sharp(req.file.buffer)
-    .resize(600, 600)
-    .toFormat("jpeg")
-    .jpeg({ quality: 95 })
-    .toFile(`uploads/brands/${filename}`);
-  //save
-  req.body.image = filename;
 
-  next();
+// Helper function to upload image buffer to Cloudinary
+const uploadToCloudinary = (buffer, folder, publicId) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: folder,
+        public_id: publicId,
+        transformation: [
+          { width: 600, height: 600, crop: "limit" },
+          { format: 'jpeg', quality: 'auto' }
+        ]
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result.secure_url);
+        }
+      }
+    );
+
+    stream.end(buffer);
+  });
+};
+
+// Image processing and uploading to Cloudinary
+const resizeImage = asyncHandler(async (req, res, next) => {
+  if (!req.file) {
+    return next(new Error('No file uploaded.'));
+  }
+
+  const filename = `brand-${uuidv4()}-${Date.now()}.jpeg`;
+
+  try {
+    // Upload image to Cloudinary
+    const imageUrl = await uploadToCloudinary(req.file.buffer, 'brands', filename);
+    // Save the image URL in the request body
+    req.body.image = imageUrl;
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 const getALLbrand= async(req,res)=>{

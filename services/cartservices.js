@@ -96,32 +96,35 @@ exports.deleteSpesficItemInCart = asyncHandler(async (req, res, next) => {
 
 exports.updateCartItemQuantity = asyncHandler(async (req, res, next) => {
   const { quantity } = req.body;
+
   const cart = await Cart.findOne({ user: req.user._id });
   if (!cart) {
-    return next(new ApiError(`there is cart in this id ${req.user._id}`), 404);
-  } else {
-    const productIndex = cart.cartItems.findIndex(
-      (item) => item._id.toString() === req.params.itemId
-    );
-    if (productIndex > -1) {
-      const cartItem = cart.cartItems[productIndex];
-      cartItem.quantity = quantity;
-      cart.cartItems[productIndex] = cartItem;
-    } else {
-      return next(
-        new ApiError(`there is no item for this id :${req.params.itemId}`, 404)
-      );
-    }
-    calcTotalCartPrice(cart);
-    await cart.save();
-
-    res.status(200).json({
-      status: "success",
-      message: "Product update to cart successfully",
-      numOfCartItems: cart.cartItems.length,
-      data: cart,
-    });
+    return next(new ApiError(`there is no cart for user ${req.user._id}`, 404));
   }
+
+  const itemIndex = cart.cartItems.findIndex(
+    (item) => item._id.toString() === req.params.itemId
+  );
+  console.log(itemIndex);
+  if (itemIndex > -1) {
+    const cartItem = cart.cartItems[itemIndex];
+    cartItem.quantity = quantity;
+    cart.cartItems[itemIndex] = cartItem;
+  } else {
+    return next(
+      new ApiError(`there is no item for this id :${req.params.itemId}`, 404)
+    );
+  }
+
+  calcTotalCartPrice(cart);
+
+  await cart.save();
+
+  res.status(200).json({
+    status: 'success',
+    numOfCartItems: cart.cartItems.length,
+    data: cart,
+  });
 });
 
 exports.applyCoupon = asyncHandler(async (req, res, next) => {

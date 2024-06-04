@@ -59,8 +59,9 @@ exports.findAllOrders = asyncHandler(async (req, res) => {
   if (req.filterObj) {
     filter = req.filterObj;
   }
+
   // Build query
-  const documentsCounts = await Order.countDocuments();
+  const documentsCounts = await Order.countDocuments(filter);
   const apiFeatures = new ApiFeatures(Order.find(filter), req.query)
     .paginate(documentsCounts)
     .filter()
@@ -69,11 +70,28 @@ exports.findAllOrders = asyncHandler(async (req, res) => {
 
   // Execute query
   const { mongooseQuery, paginationResult } = apiFeatures;
-  const documents = await mongooseQuery;
+  let orders = await mongooseQuery;
+
+  // Manually populate product details
+  orders = await Promise.all(
+    orders.map(async (order) => {
+      const populatedCartItems = await Promise.all(
+        order.cartItems.map(async (item) => {
+          if (item.product) {
+            const product = await Product.findById(item.product).select('name price description');
+            return { ...item.toObject(), product: product || null }; // Ensure we handle null products
+          } else {
+            return { ...item.toObject(), product: null }; // Handle cases where product is null
+          }
+        })
+      );
+      return { ...order.toObject(), cartItems: populatedCartItems };
+    })
+  );
 
   res
     .status(200)
-    .json({ results: documents.length, paginationResult, data: documents });
+    .json({ results: orders.length, paginationResult, data: orders });
 });
 
 exports.findSpecifcOrder = asyncHandler(async (req, res, next) => {
