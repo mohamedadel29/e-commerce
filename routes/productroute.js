@@ -11,6 +11,7 @@ const {
   setshopIdAndUserIdToBody,
   getproducttoBigData,
   getproductbycategory,
+  getrecommendations
 } = require("../services/productservice");
 const {
   createProductValidator,
@@ -59,4 +60,5 @@ router
   );
 router.get("/bigdata/:id", getproducttoBigData);
 router.get("/category/:categoryid",authService.protect,authService.allowedto("user"),getproductbycategory);
+router.post("/get-recommendations",authService.protect,authService.allowedto("user"),getrecommendations);
 module.exports = router;

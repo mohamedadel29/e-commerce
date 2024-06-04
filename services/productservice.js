@@ -6,7 +6,7 @@ const factory = require("./handelerFacteory");
 const Product = require("../model/productmodel");
 const Kafka = require("../config/kafka");
 const cloudinary=require("../util/Cloudinary")
-
+const axios = require('axios');
 exports.uploadProductImages = uploadMixOfImages([
   { name: "imagecover", maxCount: 1 },
   { name: "image", maxCount: 5 },
@@ -145,5 +145,28 @@ exports.getproductbycategory = asyncHandler(async (req, res) => {
       // Handle the case where products is an object with properties
       res.status(200).json(products);
     }
+  }
+});
+
+
+
+exports.getrecommendations = asyncHandler(async (req, res) => {
+  try {
+    const { productid } = req.body;
+    console.log('Requesting recommendations for productid:', productid);
+    const response = await axios.get(
+      `https://e-commerce-api-v1-cdk5.onrender.com/api/v1/products/${productid}`,
+      { productid },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    const recommendations = response.data;
+    res.json(recommendations);
+  } catch (error) {
+    console.error('Error fetching recommendations:', error.response ? error.response.data : error.message);
+    res.status(500).send('Internal Server Error');
   }
 });
