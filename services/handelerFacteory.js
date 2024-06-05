@@ -66,7 +66,7 @@ exports.getAll = (Model, modelName = "") =>
       filter = req.filterObj;
     }
     // Build query
-    const documentsCounts = await Model.countDocuments();
+    const documentsCounts = await Model.countDocuments(filter);
     const apiFeatures = new ApiFeatures(Model.find(filter), req.query)
       .paginate(documentsCounts)
       .filter()
@@ -77,7 +77,6 @@ exports.getAll = (Model, modelName = "") =>
     // Execute query
     const { mongooseQuery, paginationResult } = apiFeatures;
     const documents = await mongooseQuery;
-    //Kafka.sendOrderData(documents);
     res
       .status(200)
       .json({ results: documents.length, paginationResult, data: documents });
