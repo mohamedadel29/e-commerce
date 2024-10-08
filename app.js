@@ -1,5 +1,4 @@
 const express = require("express");
-//import KafkaConfig from "./util/config.js";
 const path = require("path");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
